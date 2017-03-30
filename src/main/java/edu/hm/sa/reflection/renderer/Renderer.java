@@ -8,7 +8,7 @@ import java.lang.reflect.Field;
  */
 public class Renderer{
 
-    private static final Class<RenderMe> ANNO_CLASS = RenderMe.class;
+    private static final Class ANNO_CLASS = RenderMe.class;
 
     private Object object;
     private Class objectClass;
@@ -16,22 +16,37 @@ public class Renderer{
     public Renderer(Object object){
         this.object = object;
         this.objectClass = object.getClass();
-        //TODO complete this constructor
     }
 
     public String render(){
-        Class objectClass = object.getClass();
-
-        String returnStr = "Instance of " + objectClass + "\n";
+        String returnStr = buildInstanceOfStr();
         Field[] fields = objectClass.getDeclaredFields();
         for(Field field : fields){
-            returnStr += field.getName() + "\n";
-            returnStr += field.getAnnotations().getClass() + "\n";
-            if(field.isAnnotationPresent(RenderMe.class)){
-                returnStr += field.getName() + "\n";
+            if(field.isAnnotationPresent(ANNO_CLASS)){
+                returnStr += buildFieldStr(field);
             }
         }
-        //TODO complete this method
         return returnStr;
+    }
+
+    private String buildInstanceOfStr(){
+        return "Instance of " + objectClass.getName() + "\n";
+    }
+
+    private String buildFieldStr(Field field){
+        field.setAccessible(true);
+        return field.getName() +
+                " (Type " + field.getType().getName() + ") " +
+                fieldObjectToString(field) + "\n";
+    }
+
+    protected String fieldObjectToString(Field field){
+        Object fieldObject;
+        try {
+            fieldObject = field.get(object);
+        } catch (Exception e) {
+            fieldObject = e;
+        }
+        return fieldObject.toString();
     }
 }
