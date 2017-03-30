@@ -2,6 +2,7 @@ package edu.hm.sa.reflection.renderer;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 /**
  * Created by maxl on 27.03.17.
@@ -30,13 +31,13 @@ public class Renderer{
     }
 
     private String buildInstanceOfStr(){
-        return "Instance of " + objectClass.getName() + "\n";
+        return "Instance of " + objectClass.getName() + ":\n";
     }
 
     private String buildFieldStr(Field field){
         field.setAccessible(true);
         return field.getName() +
-                " (Type " + field.getType().getName() + ") " +
+                " (Type " + field.getType().getCanonicalName() + "): " +
                 fieldObjectToString(field) + "\n";
     }
 
@@ -44,7 +45,16 @@ public class Renderer{
         Object fieldObject;
         try {
             fieldObject = field.get(object);
+            RenderMe fieldAnno = (RenderMe) field.getAnnotation(ANNO_CLASS);
+            String fieldWithStr = fieldAnno.with();
+            if(!fieldWithStr.equals("N/A")){
+                Class rendererClass = Class.forName(fieldWithStr);
+                Method renderMethod = rendererClass.getMethod("render", Object.class);
+                String renderReturn = (String) renderMethod.invoke(rendererClass, fieldObject);
+                return renderReturn;
+            }
         } catch (Exception e) {
+            e.printStackTrace();
             fieldObject = e;
         }
         return fieldObject.toString();
