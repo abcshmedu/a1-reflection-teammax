@@ -1,7 +1,6 @@
 package edu.hm.sa.reflection.renderer;
 
 import java.lang.reflect.Array;
-import java.util.Arrays;
 
 /**
  * Created by maxl on 30.03.17.
