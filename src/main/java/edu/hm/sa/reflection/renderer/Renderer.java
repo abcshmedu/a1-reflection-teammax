@@ -1,7 +1,7 @@
 package edu.hm.sa.reflection.renderer;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
@@ -14,17 +14,18 @@ import java.lang.reflect.Method;
 public class Renderer{
 
     private static final Class ANNO_CLASS = RenderMe.class;
+    private static final String RENDER_METHOD_NAME = "render";
 
     private static Object object;
     private static Class objectClass;
 
     /**
      * Creates a new Renderer to render this Object
-     * @param object the Object to render
+     * @param objectToRender the Object to render
      */
-    public Renderer(Object object){
-        this.object = object;
-        this.objectClass = object.getClass();
+    public Renderer(Object objectToRender){
+        object = objectToRender;
+        objectClass = object.getClass();
     }
 
     /**
@@ -47,7 +48,10 @@ public class Renderer{
      * @return formatted buildInstance String
      */
     private String buildInstanceOfStr(){
-        return "Instance of " + objectClass.getName() + ":\n";
+        String instanceOf = "Instance of ";
+        String objectClassName = objectClass.getName();
+        String endFormat = ":\n";
+        return instanceOf + objectClassName + endFormat;
     }
 
     /**
@@ -57,9 +61,12 @@ public class Renderer{
      */
     private String buildFieldStr(Field field){
         field.setAccessible(true);
-        return field.getName() +
-                " (Type " + field.getType().getCanonicalName() + "): " +
-                fieldObjectToString(field) + "\n";
+        String fieldName = field.getName();
+        String typeName = field.getType().getCanonicalName();
+        String typeNameFormatted = " (Type " + typeName + "): ";
+        String objectToString = fieldObjectToString(field);
+        String newLine = "\n";
+        return fieldName + typeNameFormatted + objectToString + newLine;
     }
 
     /**
@@ -77,19 +84,13 @@ public class Renderer{
             RenderMe fieldAnno = (RenderMe) field.getAnnotation(ANNO_CLASS);
             String fieldWithStr = fieldAnno.with();
 
-            //If it is not the default, use reflection to call the custom render method
-            if(!fieldWithStr.equals(RenderMe.DEFAULT_RENDER_CLASS)){
-                Class rendererClass = Class.forName(fieldWithStr);
-                Method renderMethod = rendererClass.getMethod("render", Object.class);
-                String renderReturn = (String) renderMethod.invoke(rendererClass, fieldObject);
-                return renderReturn;
-            }
-        } catch (Exception e) {
+            //Use reflection to call the custom render method (default toString)
+            Class rendererClass = Class.forName(fieldWithStr);
+            Method renderMethod = rendererClass.getMethod(RENDER_METHOD_NAME, Object.class);
+            return (String) renderMethod.invoke(rendererClass, fieldObject);
+        } catch (IllegalAccessException | ClassNotFoundException  | NoSuchMethodException | InvocationTargetException e) {
             e.printStackTrace();
-            fieldObject = e;
+            return e.toString();
         }
-
-        //Call the default toString because there was an error or no specified with field
-        return fieldObject.toString();
     }
 }

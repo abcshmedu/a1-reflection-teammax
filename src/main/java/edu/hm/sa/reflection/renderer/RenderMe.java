@@ -11,14 +11,15 @@ import java.lang.annotation.Target;
  * Annotation RenderMe
  *
  * Targets the class variables (fields)
- * RetentionPolicy is runtime (for the prupose of reflection)
+ * RetentionPolicy is runtime (for the purpose of reflection)
  */
 
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RenderMe {
 
-    static final String DEFAULT_RENDER_CLASS = "N/A";
+    //Base Class with a basic usage of toString for rendering an Object
+    String DEFAULT_RENDER_CLASS = "edu.hm.sa.reflection.renderer.CustomRenderer";
 
     /**
      * Place to specify the rendering class

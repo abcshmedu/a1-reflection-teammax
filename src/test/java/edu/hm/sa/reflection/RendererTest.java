@@ -7,6 +7,7 @@ import edu.hm.sa.reflection.renderer.*;
 public class RendererTest {
     private SomeClass toRender;
     private Renderer renderer;
+
     @Before
     public void setUp() {
         toRender = new SomeClass(5);
