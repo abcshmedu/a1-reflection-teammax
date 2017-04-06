@@ -12,6 +12,7 @@ import java.lang.annotation.Target;
  *
  * Targets the class variables and parameterless (fields, methods)
  * (Methods requiring parameters will throw exceptions but will partially render)
+ * (Methods with return type will throw exceptions but will also partially render)
  *
  * RetentionPolicy is runtime (for the purpose of reflection)
  */

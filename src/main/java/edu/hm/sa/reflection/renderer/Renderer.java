@@ -16,8 +16,8 @@ public class Renderer{
     private static final Class ANNO_CLASS = RenderMe.class;
     private static final String RENDER_METHOD_NAME = "render";
 
-    private static Object object;
-    private static Class objectClass;
+    private Object object;
+    private Class objectClass;
 
     /**
      * Creates a new Renderer to render this Object
@@ -121,10 +121,9 @@ public class Renderer{
      * @return the "toString" for the Method return
      */
     private String methodReturnToString(Method method){
-        Object methodReturn;
         try {
             //Get the object for the field
-            methodReturn = method.invoke(object);
+            Object methodReturn = method.invoke(object);
 
             //Get the with field from the RenderMe Annotation
             RenderMe fieldAnno = (RenderMe) method.getAnnotation(ANNO_CLASS);
