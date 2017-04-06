@@ -10,7 +10,9 @@ import java.lang.annotation.Target;
  *
  * Annotation RenderMe
  *
- * Targets the class variables (fields)
+ * Targets the class variables and parameterless (fields, methods)
+ * (Methods requiring parameters will throw exceptions but will partially render)
+ *
  * RetentionPolicy is runtime (for the purpose of reflection)
  */
 

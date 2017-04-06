@@ -22,8 +22,11 @@ public class RendererOtherTest {
     //Package structure is a little different: edu.hm.SomeClass -> edu.hm.sa.reflection.SomeClass
     @Test
     public void testRendering() throws Exception {
-        assertEquals("Instance of edu.hm.sa.reflection.SomeClass:\n" +
-                "foo (Type int): 5\narray (Type int[]): [1, 2, 3, ]\ndate (Type java" +
-                ".util.Date): Fri Jan 02 11:17:36 CET 1970\n", renderer.render());
+        assertEquals("Instance of edu.hm.sa.reflection.SomeOtherClass:\n" +
+                "aString (Type java.lang.String): hello\n" +
+                "aLong (Type java.lang.Long): 11\n" +
+                "anArray (Type double[]): [0.0, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, ]\n" +
+                "getaString (Return java.lang.String): hello\n", renderer.render());
+
     }
 }
