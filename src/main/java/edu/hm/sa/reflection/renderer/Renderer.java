@@ -40,6 +40,12 @@ public class Renderer{
                 returnStr += buildFieldStr(field);
             }
         }
+        Method[] methods = objectClass.getDeclaredMethods();
+        for(Method method: methods){
+            if(method.isAnnotationPresent(ANNO_CLASS)){
+                returnStr += buildMethodStr(method);
+            }
+        }
         return returnStr;
     }
 
@@ -88,6 +94,46 @@ public class Renderer{
             Class rendererClass = Class.forName(fieldWithStr);
             Method renderMethod = rendererClass.getMethod(RENDER_METHOD_NAME, Object.class);
             return (String) renderMethod.invoke(rendererClass, fieldObject);
+        } catch (IllegalAccessException | ClassNotFoundException  | NoSuchMethodException | InvocationTargetException e) {
+            e.printStackTrace();
+            return e.toString();
+        }
+    }
+
+    /**
+     * Helper method to build a String representation of a Method
+     * @param method the Method to represent
+     * @return a formatted String
+     */
+    private String buildMethodStr(Method method){
+        method.setAccessible(true);
+        String fieldName = method.getName();
+        String typeName = method.getReturnType().getCanonicalName();
+        String typeNameFormatted = " (Return " + typeName + "): ";
+        String objectToString = methodReturnToString(method);
+        String newLine = "\n";
+        return fieldName + typeNameFormatted + objectToString + newLine;
+    }
+
+    /**
+     * Helper method to return a String representation of what a method returns
+     * @param method the Method to visualize
+     * @return the "toString" for the Method return
+     */
+    private String methodReturnToString(Method method){
+        Object methodReturn;
+        try {
+            //Get the object for the field
+            methodReturn = method.invoke(object);
+
+            //Get the with field from the RenderMe Annotation
+            RenderMe fieldAnno = (RenderMe) method.getAnnotation(ANNO_CLASS);
+            String fieldWithStr = fieldAnno.with();
+
+            //Use reflection to call the custom render method (default toString)
+            Class rendererClass = Class.forName(fieldWithStr);
+            Method renderMethod = rendererClass.getMethod(RENDER_METHOD_NAME, Object.class);
+            return (String) renderMethod.invoke(rendererClass, methodReturn);
         } catch (IllegalAccessException | ClassNotFoundException  | NoSuchMethodException | InvocationTargetException e) {
             e.printStackTrace();
             return e.toString();

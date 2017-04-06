@@ -11,6 +11,8 @@ import java.lang.reflect.Array;
  */
 public class ArrayRenderer extends CustomRenderer{
 
+    private static final int ZEROETH_INDEX = 0;
+
     /**
      * Each element will be rendered using toString
      * @param object the Object that should be an Array
@@ -35,10 +37,10 @@ public class ArrayRenderer extends CustomRenderer{
      */
     private static Object[] convertToArray(Object object){
         int length = Array.getLength(object);
-        if(length == 0){
+        if(length == 0 || object == null){
             return new Object[0];
         }else {
-            Class wrapperType = Array.get(object, 0).getClass();
+            Class wrapperType = Array.get(object, ZEROETH_INDEX).getClass();
             Object[] objectArray = (Object[]) Array.newInstance(wrapperType, length);
             for (int i = 0; i < length; i++) {
                 objectArray[i] = Array.get(object, i);

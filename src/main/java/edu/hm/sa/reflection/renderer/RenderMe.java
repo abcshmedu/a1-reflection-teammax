@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
  * RetentionPolicy is runtime (for the purpose of reflection)
  */
 
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RenderMe {
 
